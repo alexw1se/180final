@@ -4,7 +4,6 @@ from passlib.hash import sha256_crypt
 from sqlalchemy.testing import db
 from werkzeug.security import check_password_hash
 
-
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
@@ -17,6 +16,11 @@ conn = engine.connect()
 @app.route('/')
 def home():
     return render_template("home.html")
+
+
+@app.route('/myaccount')
+def myaccount():
+    return render_template("myaccount.html")
 
 
 @app.route('/register', methods=['GET'])
@@ -46,28 +50,21 @@ def register_post():
 
 
 # Login
-@app.route('/login', methods=['GET',  'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
 
         conn = engine.connect()
-        user = conn.execute(text("SELECT * FROM Register WHERE Email = :email AND Passwords = :password"), {'email': email, 'password':password}).first()
+        user = conn.execute(text("SELECT * FROM Register WHERE Email = :email AND Passwords = :password"),
+                            {'email': email, 'password': password}).first()
         conn.close()
 
-        if user:
-            session['logged_in'] = True
-            flash('Login Successful!')
-            return redirect(url_for('home'))
-        else:
-            flash('Invalid email or password. Please try again.')
-            return render_template('login.html')
+    return render_template('home.html')
 
-    else:
-        return render_template('login.html')
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
     session.pop('logged_in', None)
     flash('You have been logged out.')
