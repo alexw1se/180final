@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 from sqlalchemy import create_engine, text
 from passlib.hash import sha256_crypt
 from sqlalchemy.testing import db
@@ -57,13 +57,21 @@ def login():
         conn.close()
 
         if user:
+            session['logged_in'] = True
             flash('Login Successful!')
             return redirect(url_for('home'))
         else:
             flash('Invalid email or password. Please try again.')
             return render_template('login.html')
 
+    else:
+        return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    flash('You have been logged out.')
+    return redirect(url_for('home'))
 
 # Login
 # @app.route('/login', methods=['GET', 'POST'])
