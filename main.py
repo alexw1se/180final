@@ -24,7 +24,22 @@ def login():
 def register():
     return render_template('register.html')
 
+messages = []
 
+@app.route('/chat')
+def chat():
+	return render_template('chat.html')
+
+@app.route('/send_message', methods=['POST'])
+def send_message():
+	data = request.form
+	message = data['message']
+	messages.append({'text': message, 'user': 'customer'})
+	return 'Message sent'
+
+@app.route('/get_messages')
+def get_messages():
+	return jsonify({'messages': messages})
 
 
 if __name__ == '__main__':

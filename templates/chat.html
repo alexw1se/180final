@@ -1,0 +1,68 @@
+<style>
+    .chat-container {
+	width: 80%;
+	margin: 40px auto;
+	padding: 20px;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.chat-header {
+	background-color: #f0f0f0;
+	padding: 10px;
+	border-bottom: 1px solid #ddd;
+}
+
+.chat-messages {
+	padding: 20px;
+}
+
+.chat-form {
+	margin-top: 20px;
+}
+
+#message {
+	width: 80%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+}
+
+#send-btn {
+	background-color: #4CAF50;
+	color: #fff;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+#send-btn:hover {
+	background-color: #3e8e41;
+}
+</style>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chat Page</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<h1>Chat Page</h1>
+	<div class="chat-container">
+		<div class="chat-header">
+			<p>Customer Support Chat</p>
+		</div>
+		<div class="chat-messages">
+			
+		</div>
+		<form class="chat-form" method="POST" action="/send_message">
+			<input type="text" id="message" name="message" placeholder="Type a message...">
+			<button id="send-btn" type="submit">Send</button>
+		</form>
+	</div>
+
+	<script src="chat.js"></script>
+</body>
+</html>
