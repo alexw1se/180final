@@ -1,68 +1,79 @@
 <style>
-    .chat-container {
-	width: 80%;
-	margin: 40px auto;
-	padding: 20px;
-	border: 1px solid #ddd;
-	border-radius: 10px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    padding: 20px;
 }
 
-.chat-header {
-	background-color: #f0f0f0;
-	padding: 10px;
-	border-bottom: 1px solid #ddd;
+#chat-container {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    height: 400px;
+    overflow-y: scroll;
 }
 
-.chat-messages {
-	padding: 20px;
+h1 {
+    color: #333;
 }
 
-.chat-form {
-	margin-top: 20px;
+a {
+    color: #008CBA;
+    text-decoration: none;
 }
 
-#message {
-	width: 80%;
-	padding: 10px;
-	border: 1px solid #ccc;
-	border-radius: 10px;
+a:hover {
+    color: #005b79;
 }
 
-#send-btn {
-	background-color: #4CAF50;
-	color: #fff;
-	padding: 10px 20px;
-	border: none;
-	border-radius: 10px;
-	cursor: pointer;
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
 }
 
-#send-btn:hover {
-	background-color: #3e8e41;
+input[type="submit"] {
+    background-color: #008CBA;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #005b79;
 }
 </style>
+
+
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Chat Page</title>
-	<link rel="stylesheet" href="style.css">
+    <title>Chat</title>
+    <style>
+        #chat-container {
+            height: 400px;
+            overflow-y: scroll;
+        }
+    </style>
 </head>
 <body>
-	<h1>Chat Page</h1>
-	<div class="chat-container">
-		<div class="chat-header">
-			<p>Customer Support Chat</p>
-		</div>
-		<div class="chat-messages">
-			
-		</div>
-		<form class="chat-form" method="POST" action="/send_message">
-			<input type="text" id="message" name="message" placeholder="Type a message...">
-			<button id="send-btn" type="submit">Send</button>
-		</form>
-	</div>
-
-	<script src="chat.js"></script>
+    <h1>{{ chat_type }} Chat</h1>
+    <div id="chat-container">
+        {% for message in messages %}
+            <p>{{ message.dates }} - {{ message.CustomerID }}: {{ message.message }}</p>
+        {% endfor %}
+    </div>
+    <form action="/" method="post">
+        <input type="hidden" name="chat_type" value="{{ chat_type }}">
+        <input type="text" name="message" placeholder="Type your message here...">
+        <input type="submit" value="Send">
+    </form>
+    <p>
+        <a href="?chat_type=returns">Returns Chat</a> |
+        <a href="?chat_type=refund">Refund Chat</a> |
+        <a href="?chat_type=warranty">Warranty Claim Chat</a>
+    </p>
 </body>
 </html>
