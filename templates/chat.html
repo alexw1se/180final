@@ -1,0 +1,79 @@
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+
+#chat-container {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    height: 400px;
+    overflow-y: scroll;
+}
+
+h1 {
+    color: #333;
+}
+
+a {
+    color: #008CBA;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #005b79;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+input[type="submit"] {
+    background-color: #008CBA;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #005b79;
+}
+</style>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <style>
+        #chat-container {
+            height: 400px;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ chat_type }} Chat</h1>
+    <div id="chat-container">
+        {% for message in messages %}
+            <p>{{ message.dates }} - {{ message.CustomerID }}: {{ message.message }}</p>
+        {% endfor %}
+    </div>
+    <form action="/" method="post">
+        <input type="hidden" name="chat_type" value="{{ chat_type }}">
+        <input type="text" name="message" placeholder="Type your message here...">
+        <input type="submit" value="Send">
+    </form>
+    <p>
+        <a href="?chat_type=returns">Returns Chat</a> |
+        <a href="?chat_type=refund">Refund Chat</a> |
+        <a href="?chat_type=warranty">Warranty Claim Chat</a>
+    </p>
+</body>
+</html>
