@@ -20,7 +20,17 @@ def home():
 
 @app.route('/myaccount')
 def myaccount():
-    return render_template("myaccount.html")
+    if 'logged_in' in session and session['logged_in']:
+        if 'username' in session:
+            username = session['username']
+            user_email = session['user_email']
+            return render_template("myaccount.html", username = username, user_email=user_email)
+        else:
+            flash('User information not found. Please log in again')
+            return redirect(url_for('login'))
+    else:
+        flash('You need to log in to access your account.')
+        return redirect(url_for('login'))
 
 
 @app.route('/register', methods=['GET'])
@@ -61,7 +71,18 @@ def login():
                             {'email': email, 'password': password}).first()
         conn.close()
 
-    return render_template('home.html')
+        if user:
+            session['logged_in'] = True
+            if 'Email' in user:
+                session['user_email'] = user['Email']
+                username = conn.execute(text("SELECT Username FROM Register WHERE Email = :email"),
+                                        {'email': email}).scalar()
+                if username:
+                    session['username'] = username
+                flash('Login Successful!')
+                return render_template('myaccount.html', user=user)
+
+        return render_template('myaccount.html')
 
 
 @app.route('/logout', methods=['POST'])
@@ -69,6 +90,7 @@ def logout():
     session.pop('logged_in', None)
     flash('You have been logged out.')
     return redirect(url_for('home'))
+
 
 # Login
 # @app.route('/login', methods=['GET', 'POST'])
