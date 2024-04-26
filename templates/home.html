@@ -49,6 +49,36 @@
       <title>Vendors Paradise</title>
   </head>
   <body>
+
+    <header>
+      <div class="topBar">
+        <div class="">
+<!--          <img src="../static/logo.jpg" alt="Logo" class="logo">-->
+          <ul class="barItem">
+
+            <li><a href="/">Home</a></li>
+            <li> <a href="/boats">Dashboard</a></li>
+            <li> <a href="/create_boats">Create Boats</a> </li>
+            <li> <a href="/search">Search Boats</a></li>
+            <li> <a href="/delete">Delete Boats</a></li>
+            <li> <a href="/update">My account</a></li>
+
+          </ul>
+        </div>
+
+        <div class="formSection barItem">
+          <form class="barItem" action="" method="post">
+            <input type="text" name="uid" value="" placeholder="E-mail" required>
+            <input type="password" name="pass" value="" placeholder="Password" required>
+            <input type="submit" name="loginButton" value="LOGIN">
+          </form>
+
+          <button class="barItem input" style="margin-left:10px;">
+            <a href="/register">SIGNUP</a>
+          </button>
+        </div>
+
+
     <div class="heading-container">
       <h1>Welcome To Vendors Paradise</h1>
       <h2>Enjoy a wide Variety of goods and products for sale and to sell!</h2>
@@ -57,6 +87,7 @@
       <div>
         <a href="/register" role="button">Register</a>
         <a href="/login" role="button">Login</a>
+
       </div>
       <div>
         <a href="/adminLogin" role="button">Admin Login</a>
