@@ -3,6 +3,7 @@ from sqlalchemy import create_engine, text
 from passlib.hash import sha256_crypt
 from sqlalchemy.testing import db
 from werkzeug.security import check_password_hash
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -115,27 +116,34 @@ def logout():
 def register():
     return render_template('register.html')
 
-messages = []
-
-@app.route('/chat')
+@app.route('/', methods=['GET', 'POST'])
 def chat():
-	return render_template('chat.html')
-
-@app.route('/chat', defaults={'chat_type': 'returns'})
-@app.route('/chat/<chat_type>')
-def index(chat_type):
     if request.method == 'POST':
-        message = request.form['message']
-        customer_id = 1
-        date = datetime.datetime.now()
+        chat_type = request.form.get('chat_type')
+        message = request.form.get('message')
+        dates = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        customer_id = request.form.get('CustomerID')
 
+        try:
+            with engine.connect() as connection:
+                result = connection.execute(text("INSERT INTO messages (dates, CustomerID, message, chat_type) VALUES (:dates, :CustomerID, :message, :chat_type)"),
+                                            {"dates": dates, "CustomerID": customer_id, "message": message, "chat_type": chat_type})
+        except Exception as e:
+            print(f"Error inserting message: {e}")
+            return "Error inserting message", 500
+
+        return redirect(url_for('chat', chat_type=chat_type))
+
+    chat_type = request.args.get('chat_type', 'general')
+    try:
         with engine.connect() as connection:
-            connection.execute(text("INSERT INTO Chat (message, dates, CustomerID, chat_type) VALUES (:message, :date, :customer_id, :chat_type)"), message=message, date=date, customer_id=customer_id, chat_type=chat_type)
+            result = connection.execute(text("SELECT * FROM messages WHERE chat_type = :chat_type"), {"chat_type": chat_type})
+            messages = result.fetchall()
+    except Exception as e:
+        print(f"Error fetching messages: {e}")
+        return "Error fetching messages", 500
 
-    with engine.connect() as connection:
-        messages = connection.execute(text("SELECT * FROM Chat WHERE chat_type = :chat_type"), chat_type=chat_type).fetchall()
-
-    return render_template('index.html', messages=messages, chat_type=chat_type)
+    return render_template('chat.html', chat_type=chat_type, messages=messages)
 
 if __name__ == '__main__':
     app.run(debug=True)
