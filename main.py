@@ -61,8 +61,8 @@ def register_post():
     flash('Registration Successful!')
     return render_template('login.html')
 
-@app.route('/login')
-def login():
+@app.route('/login_get')
+def login_get():
     return render_template('login.html')
 
 # Login
