@@ -67,12 +67,14 @@ input[type="submit"]:hover {
     </div>
     <form action="/" method="post">
         <input type="hidden" name="chat_type" value="{{ chat_type }}">
+        <input type="hidden" name="dates" value="{{ datetime.now().strftime('%Y-%m-%d %H:%M:%S') }}">
+        <input type="hidden" name="CustomerID" value="{{ session['CustomerID'] }}">
         <input type="text" name="message" placeholder="Type your message here...">
         <input type="submit" value="Send">
     </form>
     <p>
-        <a href="?chat_type=returns">Returns Chat</a> |
-        <a href="?chat_type=refund">Refund Chat</a> |
+        <a href="?chat_type=returns">Returns Chat</a>
+        <a href="?chat_type=refund">Refund Chat</a> 
         <a href="?chat_type=warranty">Warranty Claim Chat</a>
     </p>
 </body>
