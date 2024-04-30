@@ -7,9 +7,7 @@ from werkzeug.security import check_password_hash
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-
-conn_str = "mysql://root:Savier010523$@localhost/Vendor_App"
-
+conn_str = "mysql+pymysql://root:mlcset1555@localhost/Vendor_App"
 engine = create_engine(conn_str, echo=True)
 conn = engine.connect()
 
@@ -19,14 +17,13 @@ def home():
     return render_template("home.html")
 
 
-
 @app.route('/myaccount')
 def myaccount():
     if 'logged_in' in session and session['logged_in']:
         if 'username' in session:
             username = session['username']
             user_email = session['user_email']
-            return render_template("myaccount.html", username = username, user_email=user_email)
+            return render_template("myaccount.html", username=username, user_email=user_email)
         else:
             flash('User information not found. Please log in again')
             return redirect(url_for('login'))
@@ -60,9 +57,6 @@ def register_post():
     flash('Registration Successful!')
     return render_template('login.html')
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
 
 # Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -87,7 +81,7 @@ def login():
                 flash('Login Successful!')
                 return render_template('myaccount.html', user=user)
 
-        return render_template('myaccount.html')
+    return render_template('myaccount.html')
 
 
 @app.route('/logout', methods=['POST'])
@@ -115,11 +109,14 @@ def logout():
 def register():
     return render_template('register.html')
 
+
 messages = []
 
+#Chat
 @app.route('/chat')
 def chat():
-	return render_template('chat.html')
+    return render_template('chat.html')
+
 
 @app.route('/chat', defaults={'chat_type': 'returns'})
 @app.route('/chat/<chat_type>')
@@ -130,13 +127,42 @@ def index(chat_type):
         date = datetime.datetime.now()
 
         with engine.connect() as connection:
-            connection.execute(text("INSERT INTO Chat (message, dates, CustomerID, chat_type) VALUES (:message, :date, :customer_id, :chat_type)"), message=message, date=date, customer_id=customer_id, chat_type=chat_type)
+            connection.execute(text(
+                "INSERT INTO Chat (message, dates, CustomerID, chat_type) VALUES (:message, :date, :customer_id, :chat_type)"),
+                               message=message, date=date, customer_id=customer_id, chat_type=chat_type)
 
     with engine.connect() as connection:
-        messages = connection.execute(text("SELECT * FROM Chat WHERE chat_type = :chat_type"), chat_type=chat_type).fetchall()
+        messages = connection.execute(text("SELECT * FROM Chat WHERE chat_type = :chat_type"),
+                                      chat_type=chat_type).fetchall()
 
     return render_template('index.html', messages=messages, chat_type=chat_type)
 
+
+def add_product_form():
+     return render_template("add_product.html")
+
+def add_productd():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        price = request.form.get('price')
+        description = request.form.get('description')
+        inventory = request.form.get('inventory')
+        colors = request.form.get('colors')
+        size = request.form.get('size')
+        warranty_period = request.form.get('warranty_period')
+        vendor_id = request.form.get('vendor_id')
+
+        conn = engine.connect()
+        conn.execute(text(
+            "INSERT into product (Product_title, Product_price, Product_description, inventory, Product_colors, Product_size, warranty_period, VendorID) VALUES (:title, :price, :description, :inventory, :colors, :size, :warranty_period, :vendor_id"),
+            {'title':title, 'price':price, 'description':description,'inventory':inventory,'colors':colors,'size':size, 'warranty_period':warranty_period,'vendor_id':vendor_id})
+        conn.close()
+
+        flash('Product Added Successfully!')
+        #for now redirect to home, but change to cart or extendd admin page, idk yet
+        return redirect(url_for('home'))
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
