@@ -17,20 +17,18 @@ conn = engine.connect()
 
 @app.route('/')
 def home():
-    return render_template("home.html")
+    if 'logged_in' in session and session['logged_in']:
+        return render_template('home.html')
+    else:
+        return redirect(url_for('login'))
 
 
 
 @app.route('/myaccount')
 def myaccount():
     if 'logged_in' in session and session['logged_in']:
-        if 'username' in session:
-            username = session['username']
-            user_email = session['user_email']
-            return render_template("myaccount.html", username = username, user_email=user_email)
-        else:
-            flash('User information not found. Please log in again')
-            return redirect(url_for('login'))
+        user = session['email'] 
+        return render_template('myaccount.html', user=user)
     else:
         flash('You need to log in to access your account.')
         return redirect(url_for('login'))
@@ -61,34 +59,30 @@ def register_post():
     flash('Registration Successful!')
     return render_template('login.html')
 
-@app.route('/login_get')
-def login_get():
-    return render_template('login.html')
-
-# Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-
         conn = engine.connect()
-        user = conn.execute(text("SELECT * FROM Register WHERE Email = :email AND Passwords = :password"),
-                            {'email': email, 'password': password}).first()
+        user = conn.execute(text("SELECT * FROM Register WHERE Email = :email"),
+                            {'email': email}).first()
         conn.close()
-
         if user:
-            session['logged_in'] = True
-            if 'Email' in user:
-                session['user_email'] = user['Email']
-                username = conn.execute(text("SELECT Username FROM Register WHERE Email = :email"),
-                                        {'email': email}).scalar()
-                if username:
-                    session['username'] = username
+            stored_password = user[5]  
+            if stored_password == password:
+                session['logged_in'] = True
+                session['email'] = email
                 flash('Login Successful!')
-                return render_template('myaccount.html', user=user)
+                return redirect(url_for('home'))
+            else:
+                flash('Invalid password. Please try again.')
+                return render_template('login.html')
+        else:
+            flash('Invalid email. Please try again.')
+            return render_template('register.html')
 
-        return render_template('myaccount.html')
+    return render_template('login.html')
 
 
 @app.route('/logout', methods=['POST'])
@@ -98,25 +92,13 @@ def logout():
     return redirect(url_for('home'))
 
 
-# Login
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     if request.method == 'POST':
-#         email = request.form.get('Email')
-#         passwords = request.form.get('Passwords')
-#
-#         user = Register.query.filter_by(Email=email).first()
-#         if user and check_password_hash(user.Passwords, passwords):
-#             flash('Login successful.')
-#             return redirect(url_for('home'))
-#
-#     return render_template('login.html')
+
 
 @app.route('/register')
 def register():
     return render_template('register.html')
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/chat', methods=['GET', 'POST'])
 def chat():
     if request.method == 'POST':
         chat_type = request.form.get('chat_type')
