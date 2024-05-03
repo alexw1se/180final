@@ -127,7 +127,7 @@ def chat():
 @app.route('/chat/<chat_type>')
 def index(chat_type):
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/chat', methods=['GET', 'POST'])
 def chat():
 
     if request.method == 'POST':
