@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account</title>
+  <style>
+      body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+   background-color: #3b3b3b;
+    color: #ffffff;
+  }
+  .container {
+    max-width: 400px;
+    margin: 50px auto;
+    background-color: #8b0000;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  h2 {
+    text-align: center;
+  }
+  form {
+    margin-top: 20px;
+  }
+  label, input {
+    display: block;
+    margin-bottom: 10px;
+  }
+  input[type="text"],
+  input[type="password"],
+  input[type="tel"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    border: 2px solid #ffffff;
+    border-radius: 4px;
+  }
+  input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ffffff;
+     background-color: #8b0000;
+   color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  input[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Register</h2>
+    <form action="submit_form.php" method="POST">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+      <label for="firstname">First Name:</label>
+      <input type="text" id="firstname" name="firstname" required>
+      <label for="lastname">Last Name:</label>
+      <input type="text" id="lastname" name="lastname" required>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+      <input type="submit" value="Create Account">
+    </form>
+  </div>
+</body>
+</html>
