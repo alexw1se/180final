@@ -8,7 +8,7 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-conn_str = "mysql+pymysql://root:mlcset1555@localhost/Vendor_App"
+conn_str = "mysql+pymysql://root:Savier010523$@localhost/Vendor_App"
 engine = create_engine(conn_str, echo=True)
 conn = engine.connect()
 
@@ -96,8 +96,9 @@ def register():
     return render_template('register.html')
 
 
-@app.route('/chat', methods=['GET', 'POST'])
 
+<<<<<<< HEAD
+=======
 messages = []
 
 #Chat
@@ -149,6 +150,7 @@ def chat():
 
 
     return render_template('chat.html', chat_type=chat_type, messages=messages)
+>>>>>>> 44d256ade71fe81f38b4edd2608ad017a2f7ff37
 
 
 def add_product_form():
