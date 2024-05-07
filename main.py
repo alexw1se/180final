@@ -107,9 +107,9 @@ def chat():
     return render_template('chat.html')
 
 
-@app.route('/chat', defaults={'chat_type': 'returns'})
-@app.route('/chat/<chat_type>')
-def index(chat_type):
+# @app.route('/chat', defaults={'chat_type': 'returns'})
+# @app.route('/chat/<chat_type>')
+# def index(chat_type):
 
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
@@ -154,9 +154,9 @@ def chat():
 
 
 def add_product_form():
-     return render_template("add_product.html")
+     return render_template('add_product.html')
 
-def add_productd():
+def add_product():
     if request.method == 'POST':
         title = request.form.get('title')
         price = request.form.get('price')
