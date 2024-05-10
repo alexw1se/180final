@@ -118,54 +118,39 @@ def register():
 messages = []
 
 #Chat
-@app.route('/chat')
-def chat():
-    return render_template('chat.html')
-
-
-# @app.route('/chat', defaults={'chat_type': 'returns'})
-# @app.route('/chat/<chat_type>')
-# def index(chat_type):
-
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
 
     if request.method == 'POST':
-        chat_type = request.form.get('chat_type')
-        message = request.form.get('message')
+        customer_message = request.form.get('message')
+        customer_id = session.get('customer_id')
+        chat_type = 'customer_service'
         dates = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        customer_id = request.form.get('CustomerID')
 
         try:
             with engine.connect() as connection:
-                result = connection.execute(text("INSERT INTO messages (dates, CustomerID, message, chat_type) VALUES (:dates, :CustomerID, :message, :chat_type)"),
-                                            {"dates": dates, "CustomerID": customer_id, "message": message, "chat_type": chat_type})
+                connection.execute(text("INSERT INTO Chat (dates, CustomerID, message, chat_type) VALUES (:dates, :CustomerID, :message, :chat_type)"),
+                {'dates':dates,'CustomerID':customer_id,'message':customer_message,'chat_type':chat_type})
+
         except Exception as e:
-            print(f"Error inserting message: {e}")
-            return "Error inserting message", 500
+            flash('an error occurred, try later')
+            print(e)
 
-        return redirect(url_for('chat', chat_type=chat_type))
 
-    chat_type = request.args.get('chat_type', 'general')
+    chat_history=[]
     try:
         with engine.connect() as connection:
-
-            connection.execute(text(
-                "INSERT INTO Chat (message, dates, CustomerID, chat_type) VALUES (:message, :date, :customer_id, :chat_type)"),
-                               message=message, date=date, customer_id=customer_id, chat_type=chat_type)
-
-    with engine.connect() as connection:
-        messages = connection.execute(text("SELECT * FROM Chat WHERE chat_type = :chat_type"),
-                                      chat_type=chat_type).fetchall()
-
-            result = connection.execute(text("SELECT * FROM messages WHERE chat_type = :chat_type"), {"chat_type": chat_type})
-            messages = result.fetchall()
+            result = connection.execute(text("SELECT * FROM Chat WHERE CustomerID = :customer_id"), {'customer_id':customer_id})
+            chat_history = result.fetchall()
     except Exception as e:
-        print(f"Error fetching messages: {e}")
-        return "Error fetching messages", 500
+        flash('error occurred, try again')
+        print(e)
+
+    return render_template('chat.html', chat_history=chat_history)
 
 
-    return render_template('chat.html', chat_type=chat_type, messages=messages)
+
+
 
 
 def add_product_form():
