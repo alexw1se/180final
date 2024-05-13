@@ -16,25 +16,25 @@ conn = engine.connect()
 @app.route('/')
 def home():
     if 'logged_in' in session and session['logged_in']:
-        return render_template('home.html')
+        return render_template('home.html', email=session.get('email'))
     else:
         return redirect(url_for('login'))
-
 
 @app.route('/myaccount')
 def myaccount():
     if 'logged_in' in session and session['logged_in']:
-        user = session['email'] 
-        return render_template('myaccount.html', user=user)
+        user_email = session['email']
+        with engine.connect() as conn:
+            user_data = conn.execute(text("SELECT * FROM register WHERE email = :email"), {'email': user_email}).fetchone()
+        if user_data:
+            return render_template('myaccount.html', user=user_data)
+        else:
+            flash('User not found.')
+            return redirect(url_for('login'))
     else:
         flash('You need to log in to access your account.')
         return redirect(url_for('login'))
-      
-@app.route('/register', methods=['GET'])
-def register_get():
-    return render_template("register.html")
-
-
+    
 @app.route('/register', methods=['POST'])
 def register_post():
     username = request.form.get('username')
@@ -66,10 +66,11 @@ def login():
                             {'email': email}).first()
         conn.close()
         if user:
-            stored_password = user[5]  
+            stored_password = user[5]
             if stored_password == password:
                 session['logged_in'] = True
-                session['email'] = email
+                session['email'] = email  # Set the session.email variable
+                session['Username'] = user[1]  # Set the session.Username variable
                 flash('Login Successful!')
                 return redirect(url_for('home'))
             else:
@@ -81,10 +82,10 @@ def login():
 
     return render_template('login.html')
 
-
 @app.route('/logout', methods=['POST'])
 def logout():
     session.pop('logged_in', None)
+    session.pop('email', None)
     flash('You have been logged out.')
     return redirect(url_for('home'))
 
@@ -100,6 +101,7 @@ def register():
 messages = []
 
 #Chat
+
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
 
@@ -133,6 +135,7 @@ def chat():
 
 
     return render_template('chat.html', chat_type=chat_type, messages=messages)
+
 
 
 
