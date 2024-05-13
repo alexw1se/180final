@@ -102,11 +102,47 @@ messages = []
 
 #Chat
 
+@app.route('/chat', methods=['GET', 'POST'])
+def chat():
+
+    if request.method == 'POST':
+        customer_message = request.form.get('message')
+        customer_id = session.get('customer_id')
+        chat_type = 'customer_service'
+        dates = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        try:
+            with engine.connect() as connection:
+                connection.execute(text("INSERT INTO Chat (dates, CustomerID, message, chat_type) VALUES (:dates, :CustomerID, :message, :chat_type)"),
+                {'dates':dates,'CustomerID':customer_id,'message':customer_message,'chat_type':chat_type})
+
+        except Exception as e:
+            flash('an error occurred, try later')
+            print(e)
+
+
+    chat_history=[]
+    try:
+        with engine.connect() as connection:
+            result = connection.execute(text("SELECT * FROM Chat WHERE CustomerID = :customer_id"), {'customer_id':customer_id})
+            chat_history = result.fetchall()
+    except Exception as e:
+        flash('error occurred, try again')
+        print(e)
+
+    return render_template('chat.html', chat_history=chat_history)
+
+
+
+    return render_template('chat.html', chat_type=chat_type, messages=messages)
+
+
+
 
 def add_product_form():
-     return render_template("add_product.html")
+     return render_template('add_product.html')
 
-def add_productd():
+def add_product():
     if request.method == 'POST':
         title = request.form.get('title')
         price = request.form.get('price')
