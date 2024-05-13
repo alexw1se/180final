@@ -1,0 +1,42 @@
+<<<<<<< HEAD
+=======
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+<!--	<title>User Profile</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--	<h1>Welcome, {{ user.Firstname }} {{ user.Lastname }}!</h1>-->
+<!--	<p>Username: {{ user.Username }}</p>-->
+<!--	<p>Email: {{ user.Email }}</p>-->
+<!--	<p>Register ID: {{ user.RegisterID }}</p>-->
+<!--	<p><a href="{{ url_for('logout') }}">Logout</a></p>-->
+<!--</body>-->
+<!--</html>-->
+>>>>>>> 44d256ade71fe81f38b4edd2608ad017a2f7ff37
+{% extends "home.html" %}
+{% block body %}
+<header>
+    <div class="topBar">
+        <div class="">
+            <!-- Logo and other navigation links -->
+
+        </div>
+
+        <div class="formSection barItem">
+            {% if user_logged_in %}
+                <p>Welcome, {{ session['username'] }}!</p>
+                <form action="/logout" method="post">
+                    <input type="submit" value="Logout">
+                </form>
+            {% else %}
+                <!-- Login form and signup button -->
+            {% endif %}
+        </div>
+    </div>
+</header>
+<<<<<<< HEAD
+{% endblock %}
+=======
+{% end block %}
+>>>>>>> 44d256ade71fe81f38b4edd2608ad017a2f7ff37
