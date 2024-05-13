@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Review</title>
+    <style>
+        body {
+            background-color: #3b3b3b;
+            color: #ffffff;
+        }
+        form {
+            max-width: 275px;
+            margin: 0 auto;
+        }
+        input[type="submit"] {
+            width: 100%;
+            background-color: #8b0000;
+            border: 2px solid #ffffff;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .back-button {
+            background-color: # green;
+            color: #red;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .back-button:hover {
+            background-color:green;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Customer Review</h1>
+    <form id="reviewForm">
+        <label for="rating">Rating:</label>
+        <input type="number" id="rating" name="rating" min="1" max="10" required>
+        <br>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" cols="50" required></textarea>
+        <br>
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+        <br>
+        <button type="submit">Submit Review</button>
+    </form>
+    <button class="back-button" onclick="window.location.href='homepage.html'">Back to Homepage</button>
+</div>
+
+<script>
+    document.getElementById("reviewForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent default form submission
+        // Get form data
+        const formData = new FormData(event.target);
+        const rating = formData.get("rating");
+        const description = formData.get("description");
+        const date = formData.get("date");
+        // Display submitted data (you can modify this part to store the data or send it to a server)
+        alert("Rating: " + rating + "\nDescription: " + description + "\nDate: " + date);
+        // Reset the form
+        event.target.reset();
+    });
+</script>
+</body>
+</html>
