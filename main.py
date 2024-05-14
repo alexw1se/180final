@@ -82,6 +82,47 @@ def login():
 
     return render_template('login.html')
 
+@app.route("/vendor_login", methods=["GET", "POST"])
+def vendor_login():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT Passwords FROM Register WHERE Email = :email"), {"email": email})
+            user = result.fetchone()
+            
+            if user and user[0] == password:
+                session["vendor_email"] = email
+                flash("Login successful!")
+                return redirect(url_for("home"))
+            else:
+                flash("Invalid email or password")
+    
+    return render_template("vendor_login.html")
+
+
+@app.route("/admin_login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT passwords FROM Users WHERE email = :email AND AdminID = 1"), {"email": email})
+            user = result.fetchone()
+            
+            if user and user[0] == password:
+                session["admin_email"] = email
+                flash("Login successful!")
+                return redirect(url_for("home"))
+            else:
+                flash("Invalid email or password")
+    
+    return render_template("admin_login.html")
+
+
+
 @app.route('/logout', methods=['POST'])
 def logout():
     session.pop('logged_in', None)
