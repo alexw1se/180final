@@ -8,7 +8,7 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-conn_str = "mysql+pymysql://root:Savier010523$@localhost/Vendor_App"
+conn_str = "mysql+pymysql://root:mlcset1555@localhost/Vendor_App"
 engine = create_engine(conn_str, echo=True)
 conn = engine.connect()
 
@@ -20,12 +20,14 @@ def home():
     else:
         return redirect(url_for('login'))
 
+
 @app.route('/myaccount')
 def myaccount():
     if 'logged_in' in session and session['logged_in']:
         user_email = session['email']
         with engine.connect() as conn:
-            user_data = conn.execute(text("SELECT * FROM register WHERE email = :email"), {'email': user_email}).fetchone()
+            user_data = conn.execute(text("SELECT * FROM register WHERE email = :email"),
+                                     {'email': user_email}).fetchone()
         if user_data:
             return render_template('myaccount.html', user=user_data)
         else:
@@ -34,7 +36,8 @@ def myaccount():
     else:
         flash('You need to log in to access your account.')
         return redirect(url_for('login'))
-    
+
+
 @app.route('/register', methods=['POST'])
 def register_post():
     username = request.form.get('username')
@@ -82,6 +85,7 @@ def login():
 
     return render_template('login.html')
 
+
 @app.route('/logout', methods=['POST'])
 def logout():
     session.pop('logged_in', None)
@@ -90,21 +94,18 @@ def logout():
     return redirect(url_for('home'))
 
 
-
-
 @app.route('/register')
 def register():
     return render_template('register.html')
 
 
-
 messages = []
 
-#Chat
+
+# Chat
 
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
-
     if request.method == 'POST':
         customer_message = request.form.get('message')
         customer_id = session.get('customer_id')
@@ -113,18 +114,20 @@ def chat():
 
         try:
             with engine.connect() as connection:
-                connection.execute(text("INSERT INTO Chat (dates, CustomerID, message, chat_type) VALUES (:dates, :CustomerID, :message, :chat_type)"),
-                {'dates':dates,'CustomerID':customer_id,'message':customer_message,'chat_type':chat_type})
+                connection.execute(text(
+                    "INSERT INTO Chat (dates, CustomerID, message, chat_type) VALUES (:dates, :CustomerID, :message, :chat_type)"),
+                                   {'dates': dates, 'CustomerID': customer_id, 'message': customer_message,
+                                    'chat_type': chat_type})
 
         except Exception as e:
             flash('an error occurred, try later')
             print(e)
 
-
-    chat_history=[]
+    chat_history = []
     try:
         with engine.connect() as connection:
-            result = connection.execute(text("SELECT * FROM Chat WHERE CustomerID = :customer_id"), {'customer_id':customer_id})
+            result = connection.execute(text("SELECT * FROM Chat WHERE CustomerID = :customer_id"),
+                                        {'customer_id': customer_id})
             chat_history = result.fetchall()
     except Exception as e:
         flash('error occurred, try again')
@@ -132,15 +135,10 @@ def chat():
 
     return render_template('chat.html', chat_history=chat_history)
 
-
-
-    return render_template('chat.html', chat_type=chat_type, messages=messages)
-
-
-
-
+@app.route('/add_product')
 def add_product_form():
-     return render_template('add_product.html')
+    return render_template('add_product.html')
+
 
 def add_product():
     if request.method == 'POST':
@@ -156,13 +154,18 @@ def add_product():
         conn = engine.connect()
         conn.execute(text(
             "INSERT into product (Product_title, Product_price, Product_description, inventory, Product_colors, Product_size, warranty_period, VendorID) VALUES (:title, :price, :description, :inventory, :colors, :size, :warranty_period, :vendor_id"),
-            {'title':title, 'price':price, 'description':description,'inventory':inventory,'colors':colors,'size':size, 'warranty_period':warranty_period,'vendor_id':vendor_id})
+            {'title': title, 'price': price, 'description': description, 'inventory': inventory, 'colors': colors,
+             'size': size, 'warranty_period': warranty_period, 'vendor_id': vendor_id})
         conn.close()
 
         flash('Product Added Successfully!')
-        #for now redirect to home, but change to cart or extendd admin page, idk yet
+        # for now redirect to home, but change to cart or extendd admin page, idk yet
         return redirect(url_for('home'))
 
+
+@app.route('/product')
+def product():
+    return render_template('product.html')
 
 
 if __name__ == '__main__':
