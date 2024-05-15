@@ -92,6 +92,12 @@
     padding: 5px 10px;
     margin-left: 5px;
   }
+
+  .vendor-email {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+}
 </style>
   
   <!DOCTYPE html>
@@ -109,25 +115,21 @@
       </div>
       <nav>
         <div>
-          <a href="/">Home</a>
-            <a href="/myaccount">My account Dashboard</a>
-          <a href="/register" role="button">Register</a>
-          <a href="/login" role="button">Login</a>
-          <a href="/adminLogin" role="button">Admin Login</a>
-          <a href="/chat" role="button">Chat</a>
-           <a href="/add_product">Add Product</a>
-           <a href="/product">Products</a>
-            <a href="/logout">Logout</a>
-           </div>
-         </div>
 
-           <a href="/myaccount">My account</a>
-           <a href="/vendor_login">Vendor Login</a>
-           <a href="/adminLogin">Admin Login</a>
-           {% if session.logged_in %}
+            <a href="/">Home</a>
+            <a href="/register" role="button">Register</a>
+            <a href="/login" role="button">Login</a>
+            <a href="/adminlogin" role="button">Admin Login</a>
+            <a href="/chat" role="button">Chat</a>
+            <a href="/boats">Dashboard</a>
+            <a href="/myaccount">My account</a>
+            <a href="/vendor_login">Vendor Login</a>
+            <a href="/adminlogin">Admin Login</a>
+            {% if session.logged_in %}
+
                 <div class="topBar">
                     <div>
-                        <p>Welcome, {{ session.email }}!</p>
+                        <p>Welcome, {{ session.email }}</p>
                     </div>
                     <form action="/logout" method="post">
                         <button type="submit">Logout</button>

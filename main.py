@@ -15,10 +15,15 @@ conn = engine.connect()
 
 @app.route('/')
 def home():
-    if 'logged_in' in session and session['logged_in']:
-        return render_template('home.html', email=session.get('email'))
-    else:
-        return redirect(url_for('login'))
+    return render_template('home.html')
+
+@app.route('/adminhome')
+def admin_home():
+    return render_template('adminhome.html')
+
+@app.route('/vendorhome')
+def vendor_home():
+    return render_template('vendorhome.html')
 
 
 @app.route('/myaccount')
@@ -72,8 +77,8 @@ def login():
             stored_password = user[5]
             if stored_password == password:
                 session['logged_in'] = True
-                session['email'] = email  # Set the session.email variable
-                session['Username'] = user[1]  # Set the session.Username variable
+                session['email'] = email  
+                session['Username'] = user[1] 
                 flash('Login Successful!')
                 return redirect(url_for('home'))
             else:
@@ -91,40 +96,38 @@ def vendor_login():
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
-        
+
         with engine.connect() as conn:
-            result = conn.execute(text("SELECT Passwords FROM Register WHERE Email = :email"), {"email": email})
+            result = conn.execute(text("SELECT Password FROM vendors WHERE Email = :email"), {"email": email})
             user = result.fetchone()
-            
+
             if user and user[0] == password:
                 session["vendor_email"] = email
+                print(session["vendor_email"])
                 flash("Login successful!")
-                return redirect(url_for("home"))
+                return redirect(url_for("vendor_home"))  # Redirect to vendor_home if login is successful
             else:
                 flash("Invalid email or password")
-    
+
     return render_template("vendor_login.html")
 
 
-@app.route("/admin_login", methods=["GET", "POST"])
+@app.route('/adminlogin', methods=['GET', 'POST'])
 def admin_login():
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
-        
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
         with engine.connect() as conn:
-            result = conn.execute(text("SELECT passwords FROM Users WHERE email = :email AND AdminID = 1"), {"email": email})
-            user = result.fetchone()
-            
-            if user and user[0] == password:
-                session["admin_email"] = email
-                flash("Login successful!")
-                return redirect(url_for("home"))
-            else:
-                flash("Invalid email or password")
-    
-    return render_template("admin_login.html")
-
+            admin = conn.execute(text("SELECT * FROM Admins WHERE Email = :email"), {'email': email}).fetchone()
+        if admin and admin[5] == password:
+            session['admin_logged_in'] = True
+            session['admin_email'] = email
+            session.logged_in = True  
+            print(session.logged_in)  
+            return redirect(url_for('admin_home'))
+        else:
+            return render_template('adminlogin.html', error=True)
+    return render_template('adminlogin.html')
 
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -175,21 +178,31 @@ def chat():
 
     return render_template('chat.html', chat_history=chat_history)
 
+
 @app.route('/add_product')
 def add_product_form():
     return render_template('add_product.html')
 
 
+
+
+    return render_template('chat.html', chat_type=chat_type, messages=messages)
+
+
+
+
+@app.route('/add_product', methods=['GET', 'POST'])
 def add_product():
     if request.method == 'POST':
-        title = request.form.get('title')
-        price = request.form.get('price')
-        description = request.form.get('description')
-        inventory = request.form.get('inventory')
-        colors = request.form.get('colors')
-        size = request.form.get('size')
-        warranty_period = request.form.get('warranty_period')
-        vendor_id = request.form.get('vendor_id')
+        title = request.form['title']
+        price = request.form['price']
+        description = request.form['description']
+        warranty = request.form['warranty']
+        category = request.form['category']
+        colors = request.form['colors']
+        sizes = request.form['sizes']
+        number_available = request.form['number available']
+
 
         conn = engine.connect()
         conn.execute(text(
@@ -201,6 +214,12 @@ def add_product():
         flash('Product Added Successfully!')
         # for now redirect to home, but change to cart or extendd admin page, idk yet
         return redirect(url_for('home'))
+
+        return 'Product added successfully!'
+
+    return render_template('add_product.html')
+
+
 
 
 @app.route('/product')
