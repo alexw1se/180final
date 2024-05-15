@@ -134,6 +134,20 @@ def logout():
     return redirect(url_for('home'))
 
 
+    @app.route('/returns')
+    def index():
+        return render_template('returns.html')
+
+    @app.route('/submit_form', methods=['POST'])
+    def submit_form():
+        if request.method == 'POST':
+            date = request.form['date']
+            title = request.form['title']
+            description = request.form['description']
+            demand = request.form['demand']
+
+            return render_template('Returns.html', date=date, title=title, description=description, demand=demand)
+
 
 
 @app.route('/register')
@@ -202,7 +216,9 @@ def add_product():
     return render_template('add_product.html')
 
 
-
+@app.route('/product', methods=['GET','POST'])
+def product():
+    return render_template('product.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
