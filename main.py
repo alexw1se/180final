@@ -2,13 +2,13 @@ from flask import Flask, render_template, request, flash, redirect, url_for, ses
 from sqlalchemy import create_engine, text
 from passlib.hash import sha256_crypt
 from sqlalchemy.testing import db
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-conn_str = "mysql+pymysql://root:Savier010523$@localhost/Vendor_App"
+conn_str = "mysql+pymysql://root:mlcset1555@localhost/Vendor_App"
 engine = create_engine(conn_str, echo=True)
 conn = engine.connect()
 
@@ -17,20 +17,24 @@ conn = engine.connect()
 def home():
     return render_template('home.html')
 
+
 @app.route('/adminhome')
 def admin_home():
     return render_template('adminhome.html')
 
+
 @app.route('/vendorhome')
 def vendor_home():
     return render_template('vendorhome.html')
+
 
 @app.route('/myaccount')
 def myaccount():
     if 'logged_in' in session and session['logged_in']:
         user_email = session['email']
         with engine.connect() as conn:
-            user_data = conn.execute(text("SELECT * FROM register WHERE email = :email"), {'email': user_email}).fetchone()
+            user_data = conn.execute(text("SELECT * FROM register WHERE email = :email"),
+                                     {'email': user_email}).fetchone()
         if user_data:
             return render_template('myaccount.html', user=user_data)
         else:
@@ -39,7 +43,8 @@ def myaccount():
     else:
         flash('You need to log in to access your account.')
         return redirect(url_for('login'))
-    
+
+
 @app.route('/register', methods=['POST'])
 def register_post():
     username = request.form.get('username')
@@ -47,6 +52,7 @@ def register_post():
     lastname = request.form.get('lastname')
     email = request.form.get('email')
     password = request.form.get('password')
+    hashed_password = generate_password_hash(password)
 
     conn = engine.connect()
     conn.execute(text(
@@ -74,8 +80,8 @@ def login():
             stored_password = user[5]
             if stored_password == password:
                 session['logged_in'] = True
-                session['email'] = email  
-                session['Username'] = user[1] 
+                session['email'] = email
+                session['Username'] = user[1]
                 flash('Login Successful!')
                 return redirect(url_for('home'))
             else:
@@ -86,6 +92,7 @@ def login():
             return render_template('register.html')
 
     return render_template('login.html')
+
 
 @app.route("/vendor_login", methods=["GET", "POST"])
 def vendor_login():
@@ -118,8 +125,8 @@ def admin_login():
         if admin and admin[5] == password:
             session['admin_logged_in'] = True
             session['admin_email'] = email
-            session.logged_in = True  
-            print(session.logged_in)  
+            session.logged_in = True
+            print(session.logged_in)
             return redirect(url_for('admin_home'))
         else:
             return render_template('adminlogin.html', error=True)
@@ -134,21 +141,18 @@ def logout():
     return redirect(url_for('home'))
 
 
-
-
 @app.route('/register')
 def register():
     return render_template('register.html')
 
 
-
 messages = []
 
-#Chat
+
+# Chat
 
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
-
     if request.method == 'POST':
         customer_message = request.form.get('message')
         customer_id = session.get('customer_id')
@@ -157,18 +161,20 @@ def chat():
 
         try:
             with engine.connect() as connection:
-                connection.execute(text("INSERT INTO Chat (dates, CustomerID, message, chat_type) VALUES (:dates, :CustomerID, :message, :chat_type)"),
-                {'dates':dates,'CustomerID':customer_id,'message':customer_message,'chat_type':chat_type})
+                connection.execute(text(
+                    "INSERT INTO Chat (dates, CustomerID, message, chat_type) VALUES (:dates, :CustomerID, :message, :chat_type)"),
+                    {'dates': dates, 'CustomerID': customer_id, 'message': customer_message,
+                     'chat_type': chat_type})
 
         except Exception as e:
             flash('an error occurred, try later')
             print(e)
 
-
-    chat_history=[]
+    chat_history = []
     try:
         with engine.connect() as connection:
-            result = connection.execute(text("SELECT * FROM Chat WHERE CustomerID = :customer_id"), {'customer_id':customer_id})
+            result = connection.execute(text("SELECT * FROM Chat WHERE CustomerID = :customer_id"),
+                                        {'customer_id': customer_id})
             chat_history = result.fetchall()
     except Exception as e:
         flash('error occurred, try again')
@@ -177,9 +183,9 @@ def chat():
     return render_template('chat.html', chat_history=chat_history)
 
 
-
-    return render_template('chat.html', chat_type=chat_type, messages=messages)
-
+@app.route('/add_product')
+def add_product_form():
+    return render_template('add_product.html')
 
 
 
@@ -195,11 +201,48 @@ def add_product():
         sizes = request.form['sizes']
         number_available = request.form['number available']
 
-       
+        conn = engine.connect()
+        conn.execute(text(
+            "INSERT into product (Product_title, Product_price, Product_description, inventory, Product_colors, Product_size, warranty_period, VendorID) VALUES (:title, :price, :description, :inventory, :colors, :size, :warranty_period, :vendor_id"),
+            {'title': title, 'price': price, 'description': description, 'inventory': inventory, 'colors': colors,
+             'size': size, 'warranty_period': warranty_period, 'vendor_id': vendor_id})
+        conn.close()
 
-        return 'Product added successfully!'
+        flash('Product Added Successfully!')
+        return redirect(url_for('products'))
 
-    return render_template('add_product.html')
+
+    return render_template('add.product.html')
+
+@app.route('/product', methods=['GET','POST'])
+def product():
+    return render_template('product.html')
+@app.route('/Gift_Card', methods=['GET','POST'])
+def giftcard():
+    return render_template('Gift_Card.html')
+@app.route('/Mini_hoops', methods=['GET','POST'])
+def minihoops():
+    return render_template('Mini_hoops.html')
+@app.route('/Shoes', methods=['GET','POST'])
+def shoes():
+    return render_template('Shoes.html')
+@app.route('/Phone', methods=['GET','POST'])
+def phone():
+    return render_template('Phone.html')
+
+
+
+# @app.route('/edit_product/<int:product_id>', methods=['GET','POST'])
+# @app.route('/delete_product/<int:product_id>', methods=['GET','POST'])
+#
+# @app.route('/my_orders')
+# def my_orders():
+#     if 'logged_in' in session and session [logged_in]:
+#         user_email = session['email']
+#         return render_template('myorders.html', orders=orders)
+#     else:
+#         flash('You need to log in to view your orders.')
+#         return redirect(url_for('login'))
 
 
 

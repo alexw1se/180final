@@ -109,22 +109,25 @@
   </head>
   <body>
 
-      <div class="heading-container">
+  <div class="heading-container">
         <h1>Welcome To Vendors Paradise</h1>
         <h2>Enjoy a wide Variety of goods and products for sale and to sell!</h2>
-      </div>
-      <nav>
+  </div>
+    <nav>
         <div>
             <a href="/">Home</a>
             <a href="/register" role="button">Register</a>
             <a href="/login" role="button">Login</a>
             <a href="/adminlogin" role="button">Admin Login</a>
             <a href="/chat" role="button">Chat</a>
-            <a href="/boats">Dashboard</a>
+            <a href="/product">Products</a>
+            <a href="/add_product">Add Products</a>
             <a href="/myaccount">My account</a>
             <a href="/vendor_login">Vendor Login</a>
             <a href="/adminlogin">Admin Login</a>
             {% if session.logged_in %}
+
+
                 <div class="topBar">
                     <div>
                         <p>Welcome, {{ session.email }}</p>
@@ -138,6 +141,7 @@
                 <a href="/login">Login</a>
             {% endif %}
         </div>
+
     </nav>
 </body>
 </html>
