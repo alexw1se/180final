@@ -179,6 +179,7 @@ def chat():
     return render_template('chat.html', chat_history=chat_history)
 
 
+
 @app.route('/add_product')
 def add_product_form():
     return render_template('add_product.html')
@@ -191,7 +192,8 @@ def add_product_form():
 
 
 
-@app.route('/add_product', methods=['GET', 'POST'])
+
+@app.route('/add_product', methods=['GET','POST'])
 def add_product():
     if request.method == 'POST':
         title = request.form['title']
@@ -212,8 +214,7 @@ def add_product():
         conn.close()
 
         flash('Product Added Successfully!')
-        # for now redirect to home, but change to cart or extendd admin page, idk yet
-        return redirect(url_for('home'))
+        return redirect(url_for('add_product.html'))
 
         return 'Product added successfully!'
 
@@ -221,10 +222,19 @@ def add_product():
 
 
 
+# @app.route('/edit_product/<int:product_id>', methods=['GET','POST'])
+# @app.route('/delete_product/<int:product_id>', methods=['GET','POST'])
+#
+# @app.route('/my_orders')
+# def my_orders():
+#     if 'logged_in' in session and session [logged_in]:
+#         user_email = session['email']
+#         return render_template('myorders.html', orders=orders)
+#     else:
+#         flash('You need to log in to view your orders.')
+#         return redirect(url_for('login'))
 
-@app.route('/product')
-def product():
-    return render_template('product.html')
+
 
 
 if __name__ == '__main__':
