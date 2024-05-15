@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for, ses
 from sqlalchemy import create_engine, text
 from passlib.hash import sha256_crypt
 from sqlalchemy.testing import db
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 
 app = Flask(__name__)
@@ -52,6 +52,7 @@ def register_post():
     lastname = request.form.get('lastname')
     email = request.form.get('email')
     password = request.form.get('password')
+    hashed_password = generate_password_hash(password)
 
     conn = engine.connect()
     conn.execute(text(
@@ -186,7 +187,6 @@ def chat():
 def add_product_form():
     return render_template('add_product.html')
 
-    return render_template('chat.html', chat_type=chat_type, messages=messages)
 
 
 @app.route('/add_product', methods=['GET', 'POST'])
@@ -209,11 +209,27 @@ def add_product():
         conn.close()
 
         flash('Product Added Successfully!')
-        return redirect(url_for('add_product.html'))
+        return redirect(url_for('products'))
 
-        return 'Product added successfully!'
 
-    return render_template('add_product.html')
+    return render_template('add.product.html')
+
+@app.route('/product', methods=['GET','POST'])
+def product():
+    return render_template('product.html')
+@app.route('/Gift_Card', methods=['GET','POST'])
+def giftcard():
+    return render_template('Gift_Card.html')
+@app.route('/Mini_hoops', methods=['GET','POST'])
+def minihoops():
+    return render_template('Mini_hoops.html')
+@app.route('/Shoes', methods=['GET','POST'])
+def shoes():
+    return render_template('Shoes.html')
+@app.route('/Phone', methods=['GET','POST'])
+def phone():
+    return render_template('Phone.html')
+
 
 
 # @app.route('/edit_product/<int:product_id>', methods=['GET','POST'])
@@ -229,9 +245,6 @@ def add_product():
 #         return redirect(url_for('login'))
 
 
-@app.route('/product', methods=['GET','POST'])
-def product():
-    return render_template('product.html')
 
 
 if __name__ == '__main__':
