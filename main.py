@@ -17,9 +17,11 @@ conn = engine.connect()
 def home():
     return render_template('home.html')
 
+
 @app.route('/adminhome')
 def admin_home():
     return render_template('adminhome.html')
+
 
 @app.route('/vendorhome')
 def vendor_home():
@@ -77,8 +79,8 @@ def login():
             stored_password = user[5]
             if stored_password == password:
                 session['logged_in'] = True
-                session['email'] = email  
-                session['Username'] = user[1] 
+                session['email'] = email
+                session['Username'] = user[1]
                 flash('Login Successful!')
                 return redirect(url_for('home'))
             else:
@@ -122,12 +124,13 @@ def admin_login():
         if admin and admin[5] == password:
             session['admin_logged_in'] = True
             session['admin_email'] = email
-            session.logged_in = True  
-            print(session.logged_in)  
+            session.logged_in = True
+            print(session.logged_in)
             return redirect(url_for('admin_home'))
         else:
             return render_template('adminlogin.html', error=True)
     return render_template('adminlogin.html')
+
 
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -159,8 +162,8 @@ def chat():
             with engine.connect() as connection:
                 connection.execute(text(
                     "INSERT INTO Chat (dates, CustomerID, message, chat_type) VALUES (:dates, :CustomerID, :message, :chat_type)"),
-                                   {'dates': dates, 'CustomerID': customer_id, 'message': customer_message,
-                                    'chat_type': chat_type})
+                    {'dates': dates, 'CustomerID': customer_id, 'message': customer_message,
+                     'chat_type': chat_type})
 
         except Exception as e:
             flash('an error occurred, try later')
@@ -179,21 +182,14 @@ def chat():
     return render_template('chat.html', chat_history=chat_history)
 
 
-
 @app.route('/add_product')
 def add_product_form():
     return render_template('add_product.html')
 
-
-
-
     return render_template('chat.html', chat_type=chat_type, messages=messages)
 
 
-
-
-
-@app.route('/add_product', methods=['GET','POST'])
+@app.route('/add_product', methods=['GET', 'POST'])
 def add_product():
     if request.method == 'POST':
         title = request.form['title']
@@ -204,7 +200,6 @@ def add_product():
         colors = request.form['colors']
         sizes = request.form['sizes']
         number_available = request.form['number available']
-
 
         conn = engine.connect()
         conn.execute(text(
@@ -221,7 +216,6 @@ def add_product():
     return render_template('add_product.html')
 
 
-
 # @app.route('/edit_product/<int:product_id>', methods=['GET','POST'])
 # @app.route('/delete_product/<int:product_id>', methods=['GET','POST'])
 #
@@ -235,6 +229,9 @@ def add_product():
 #         return redirect(url_for('login'))
 
 
+@app.route('/product', methods=['GET','POST'])
+def product():
+    return render_template('product.html')
 
 
 if __name__ == '__main__':
