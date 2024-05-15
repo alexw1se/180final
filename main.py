@@ -141,6 +141,20 @@ def logout():
     return redirect(url_for('home'))
 
 
+    @app.route('/returns')
+    def index():
+        return render_template('returns.html')
+
+    @app.route('/submit_form', methods=['POST'])
+    def submit_form():
+        if request.method == 'POST':
+            date = request.form['date']
+            title = request.form['title']
+            description = request.form['description']
+            demand = request.form['demand']
+
+            return render_template('Returns.html', date=date, title=title, description=description, demand=demand)
+
 @app.route('/register')
 def register():
     return render_template('register.html')
@@ -232,20 +246,10 @@ def phone():
 
 
 
-# @app.route('/edit_product/<int:product_id>', methods=['GET','POST'])
-# @app.route('/delete_product/<int:product_id>', methods=['GET','POST'])
-#
-# @app.route('/my_orders')
-# def my_orders():
-#     if 'logged_in' in session and session [logged_in]:
-#         user_email = session['email']
-#         return render_template('myorders.html', orders=orders)
-#     else:
-#         flash('You need to log in to view your orders.')
-#         return redirect(url_for('login'))
 
-
-
+@app.route('/product', methods=['GET','POST'])
+def product():
+    return render_template('product.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
