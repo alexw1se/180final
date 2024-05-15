@@ -1,0 +1,161 @@
+CREATE DATABASE Vendor_App;
+  use Vendor_App;
+  
+  Drop Table register;
+  
+ CREATE TABLE Register (
+  RegisterID int not null auto_increment primary key,
+  Username varchar(50) NOT NULL,
+  FirstName varchar(50) NOT NULL,
+  LastName varchar(50) NOT NULL,
+  Email varchar(255) NOT NULL,
+  Passwords varchar(255) NOT NULL,
+  UNIQUE(Email)
+);
+INSERT INTO Admins (AdminID, Username, FirstName, LastName, Email, Passwords)
+VALUES (1, 'xshef123', 'Xavier', 'Shefcyk', 'xshefcyk@gmail.com', 'shef1234');
+Create Table Admins (
+AdminID int Primary key,
+Username VARCHAR(50) NOT NULL,
+FirstName VARCHAR(50) NOT NULL,
+LastName VARCHAR(50) NOT NULL,
+Email VARCHAR(255) NOT NULL ,
+Passwords VARCHAR(255) NOT NULL 
+);
+  
+  CREATE TABLE Customers (
+  CustomerID int Primary Key,
+   OpenDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   Email VARCHAR(255) NOT NULL UNIQUE,
+    Passwords VARCHAR(255) NOT NULL
+);
+
+create table Vendors(
+VendorID int not null primary key,
+FirstName varchar(50) not null,
+LastName varchar(50) not null,
+phone varchar(10) not null,
+email varchar(30) not null, 
+constraint vendors_ibfk_1 foreign key(email) references Users(email) 
+);
+
+create table Product(
+ProductID int not null primary key,
+Product_title varchar(30) not null,
+Product_price int not null,
+Product_description varchar(200),
+inventory int not null,
+Product_colors varchar(10),
+Product_size varchar(10),
+warranty_period date,
+VendorID int not null,
+foreign key(VendorID) references Vendors(VendorID)
+);
+   
+  
+  insert into Users (UserID,AdminID,CustomerID,VendorID,email,usernames,passwords) values ('2','1','1','1','bigx1@gmail.com','xshef','sav');
+
+  CREATE TABLE Users (
+  UserID int PRIMARY KEY,
+  AdminID int NOT NULL,
+  VendorID int NOT NULL,
+  CustomerID int NOT NULL,
+  email varchar(30) not null,
+usernames varchar(30) not null,
+passwords varchar(100) not null
+);
+
+
+  
+  CREATE TABLE Cart (
+  CartID int Primary Key,
+  CustomerID int NOT NULL,
+  ProductID int NOT NULL
+  );
+  
+  
+create table Orders(
+order_id int not null primary key,
+order_date date not null,
+order_total float not null,
+order_status ENUM('pending', 'confirmed','handed to delivery partner','shipped'),
+CustomerID int not null,
+foreign key(CustomerID) references Customers(CustomerID)
+);
+  
+create table Review(
+review_id int not null Primary key,
+rating int,
+comments TEXT,
+ProductID int not null,
+Foreign Key(ProductID) references Product(ProductID) 
+);
+
+create table ReturnItem(
+ReturnID int not null primary key,
+dates date not null,
+title varchar(50) not null,
+demand ENUM('return','refund','claim') not null,
+image TEXT,
+descriptions TEXT not null,
+state ENUM('pending', 'rejected', 'confirmed', 'processing', 'complete') not null,
+CustomerID int not null,
+foreign key(CustomerID) references Customers(CustomerID)
+);
+
+CREATE TABLE Chat (
+    ChatID integer primary key auto_increment,
+    dates date not null,
+    message text not null,
+    CustomerID integer not null,
+    chat_type text not null,
+    FOREIGN KEY (CustomerID) REFERENCES Customers (CustomerID)
+);
+
+
+DELETE FROM Admins WHERE AdminID = 1;
+
+DELETE FROM Vendors WHERE VendorID = 1;
+
+
+UPDATE Admins
+SET email='admin123@google.com'
+Where AdminID =1;
+
+UPDATE Vendors
+SET phone = '123456789'
+WHERE VendorID = 1;
+
+
+select * from Admins;
+
+
+
+create table Vendors(
+VendorID int not null primary key,
+FirstName varchar(50) not null,
+LastName varchar(50) not null,
+phone varchar(10) not null,
+email varchar(30) not null, 
+constraint vendors_ibfk_1 foreign key(email) references Users(email) 
+);
+
+select * from Vendors;
+
+select * from Register;
+
+select * from Customers;
+
+select * from Product;
+
+select * from Users;
+
+select * from Cart;
+
+select * from Orders;
+
+select * from Review;
+
+select * from ReturnItem;
+
+select * from Chat;
